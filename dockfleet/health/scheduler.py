@@ -3,12 +3,12 @@ import threading
 import time
 from pathlib import Path
 from typing import Optional
-from sqlmodel import Session, select
+from sqlmodel import select
 
 from dockfleet.cli.config import DockFleetConfig, HealthCheckConfig
 from dockfleet.core.orchestrator import mark_restart_failed, restart_service
 from dockfleet.health.checker import HealthChecker
-from dockfleet.health.models import ContainerStatus, Service, engine
+from dockfleet.health.models import ContainerStatus, Service, get_session
 from dockfleet.health.scheduler_lock import SchedulerLock
 from dockfleet.health.status import (
     mark_restart_successful,
@@ -225,7 +225,7 @@ class HealthScheduler:
             return
 
         # Load latest DB state
-        with Session(engine) as session:
+        with get_session() as session:
             svc = session.exec(
                 select(Service).where(Service.name == name)
             ).one_or_none()
