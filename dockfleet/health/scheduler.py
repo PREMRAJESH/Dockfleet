@@ -148,7 +148,7 @@ class HealthScheduler:
                     continue
 
                 # Check if the service is currently marked as STOPPED in the database
-                with Session(engine) as session:
+                with get_session() as session:
                     svc_db = session.exec(
                         select(Service).where(Service.name == name)
                     ).one_or_none()
